@@ -127,6 +127,8 @@ ngx_dynamic_upstream_handler(ngx_http_request_t *r)
     ngx_buf_t                      *b;
     ngx_http_upstream_srv_conf_t   *uscf;
     ngx_slab_pool_t                *shpool;
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                      "do dynamic configuration!");
     
     if (r->method != NGX_HTTP_GET && r->method != NGX_HTTP_HEAD) {
         return NGX_HTTP_NOT_ALLOWED;

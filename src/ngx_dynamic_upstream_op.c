@@ -7,6 +7,10 @@
 #include "ngx_dynamic_upstream_module.h"
 #include "ngx_inet_slab.h"
 
+#if (NGX_HTTP_UPSTREAM_CHECK)
+#include "ngx_http_upstream_check_module.h"
+#endif
+
 
 static const ngx_str_t ngx_dynamic_upstream_params[] = {
     ngx_string("arg_upstream"),
@@ -225,7 +229,7 @@ ngx_dynamic_upstream_op(ngx_http_request_t *r, ngx_dynamic_upstream_op_t *op,
     return rc;
 }
 
-
+//james
 static ngx_int_t
 ngx_dynamic_upstream_op_add(ngx_http_request_t *r, ngx_dynamic_upstream_op_t *op,
                             ngx_slab_pool_t *shpool, ngx_http_upstream_srv_conf_t *uscf)
@@ -313,6 +317,17 @@ ngx_dynamic_upstream_op_add(ngx_http_request_t *r, ngx_dynamic_upstream_op_t *op
     if (op->op_param & NGX_DYNAMIC_UPSTEAM_OP_PARAM_DOWN) {
         last->next->down = op->down;
     }
+//james
+#if (NGX_HTTP_UPSTREAM_CHECK)
+    // if (!server[i].down) {
+        ngx_log_error(NGX_LOG_EMERG, r->connection->log, 0,
+            "james: ngx_dynamic_upstream_op_add: adding a peer. ");
+        last->next->check_index =
+            ngx_http_upstream_check_add_peer1(r, uscf, &u.addrs[0]);
+    // } else {
+        // peer[n].check_index = (ngx_uint_t) NGX_ERROR;
+    // }
+#endif
 
     peers->number++;
     peers->total_weight += last->next->weight;
